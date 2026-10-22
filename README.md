@@ -10,10 +10,14 @@ Türkiye radyolarını listeleyip dinleyebildiğin, minimal İsviçre tipografis
 
 ## Çalıştırma
 
-Derleme adımı yok, herhangi bir statik sunucu yeterli:
+Derleme adımı yok; uygulama `public/` klasöründe, herhangi bir statik sunucu yeterli:
 
 ```sh
-python3 -m http.server 8765
+python3 -m http.server 8765 -d public
 ```
 
 HTTPS üzerinde yayınlandığında tarayıcı `http://` akışları engellediği için bu istasyonlar listede gizlenir.
+
+## Yayınlama
+
+Cloudflare Workers (statik varlıklar) için `wrangler.jsonc` hazır. Build komutu boş kalır, deploy komutu `npx wrangler deploy`.
