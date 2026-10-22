@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Radyo Türkiye</title>
+  <meta name="description" content="Türkiye radyolarını listele, ara ve canlı dinle.">
+  <meta name="theme-color" content="#ebebe8" media="(prefers-color-scheme: light)" id="themeLight">
+  <meta name="theme-color" content="#0b0b0b" media="(prefers-color-scheme: dark)" id="themeDark">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    try { const t = localStorage.getItem("rtr:theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch {}
+  </script>
+</head>
+<body>
+  <div class="app">
+    <div class="bar">
+      <span class="live">Canlı yayın</span>
+      <div class="theme" id="theme" role="group" aria-label="Tema">
+        <button data-theme="auto" aria-pressed="true">Oto</button>
+        <button data-theme="light" aria-pressed="false">Açık</button>
+        <button data-theme="dark" aria-pressed="false">Koyu</button>
+      </div>
+    </div>
+    <header class="top">
+      <div class="brand">
+        <h1>Radyo<span class="dot" aria-hidden="true"></span></h1>
+        <p class="sub">Türkiye</p>
+      </div>
+      <div class="count">
+        <span class="count-label" id="countLabel">Tümü</span>
+        <span class="count-num" id="countNum">—</span>
+      </div>
+    </header>
+
+    <div class="controls">
+      <label class="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+        <input id="search" type="search" placeholder="İstasyon, şehir ya da tür ara" autocomplete="off" spellcheck="false">
+        <kbd>/</kbd>
+      </label>
+      <nav class="chips" id="chips" aria-label="Filtreler"></nav>
+    </div>
+
+    <main>
+      <ol class="list" id="list" aria-live="polite"></ol>
+      <div class="state" id="state" hidden></div>
+    </main>
+  </div>
+
+  <!-- Mini player -->
+  <section class="mini" id="mini" hidden aria-label="Çalan istasyon">
+    <div class="mini-row">
+      <button class="mini-info" id="miniOpen" aria-label="Oynatıcıyı aç">
+        <span class="mini-num" id="miniNum"></span>
+        <span class="mini-text">
+          <span class="mini-name" id="miniName"></span>
+          <span class="mini-meta" id="miniMeta"></span>
+        </span>
+      </button>
+      <button class="icon-btn mini-play" id="miniPlay" aria-label="Oynat/Duraklat"></button>
+    </div>
+  </section>
+
+  <!-- Full player -->
+  <section class="player" id="player" hidden aria-label="Oynatıcı" role="dialog" aria-modal="true">
+    <header class="player-top">
+      <button class="icon-btn ghost" id="playerClose" aria-label="Kapat">
+        <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <span class="pill" id="playerCity">Türkiye</span>
+      <div class="seg">
+        <span class="seg-on" id="playerCodec">MP3</span><span id="playerBitrate">128</span>
+      </div>
+    </header>
+
+    <div class="player-hero">
+      <div class="big-num" id="bigNum"></div>
+      <div class="big-name" id="bigName"></div>
+    </div>
+
+    <div class="dial">
+      <button class="icon-btn round" id="favBtn" aria-label="Favorilere ekle">
+        <svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg>
+      </button>
+      <div class="ruler ruler--big" aria-hidden="true"><div class="ruler-track"></div><div class="ruler-labels" id="rulerLabels"></div><div class="needle"></div></div>
+      <button class="icon-btn round" id="shareBtn" aria-label="Paylaş">
+        <svg viewBox="0 0 24 24"><path d="M12 15V3M7.5 7.5 12 3l4.5 4.5M5 12v8h14v-8"/></svg>
+      </button>
+    </div>
+
+    <div class="player-bottom">
+      <div class="now">
+        <span class="now-label" id="nowLabel">Canlı yayın</span>
+        <span class="now-title" id="nowTitle"></span>
+      </div>
+      <div class="transport">
+        <button class="t-btn" id="prevBtn" aria-label="Önceki istasyon">
+          <svg viewBox="0 0 24 24"><path d="M7 5v14M18 5 9 12l9 7z"/></svg>
+        </button>
+        <button class="t-btn t-main" id="playBtn"><span id="playLabel">Duraklat</span></button>
+        <button class="t-btn" id="nextBtn" aria-label="Sonraki istasyon">
+          <svg viewBox="0 0 24 24"><path d="M17 5v14M6 5l9 7-9 7z"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+  <audio id="audio" preload="none"></audio>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>
