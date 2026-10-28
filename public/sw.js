@@ -1,10 +1,11 @@
-const VERSION = "rtr-v2";
+const VERSION = "rtr-v5";
 const SHELL = [
   "./",
   "index.html",
   "styles.css",
   "app.js",
   "manifest.webmanifest",
+  "data/stations.json",
   "icons/icon.svg",
   "icons/icon-192.png",
   "icons/icon-512.png",
@@ -54,5 +55,5 @@ self.addEventListener("fetch", (e) => {
       })
     );
   }
-  // Everything else (radio-browser API, audio streams) goes straight to the network.
+  // Everything else (audio streams) goes straight to the network.
 });
